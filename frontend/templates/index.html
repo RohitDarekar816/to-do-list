@@ -100,15 +100,43 @@
         .input-section {
             margin-bottom: 24px;
             position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 16px;
         }
         
         .input-container {
             display: flex;
-            gap: 12px;
-            align-items: center;
+            flex-direction: column;
+            gap: 16px;
         }
         
-        #todoInput {
+        .primary-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .primary-inputs input {
+            width: 100%;
+        }
+        
+        .secondary-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .secondary-inputs input {
+            width: 100%;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        #todoInput, #todoDescription {
             flex: 1;
             padding: 16px 20px;
             border: 2px solid #e1e5e9;
@@ -120,7 +148,7 @@
             backdrop-filter: blur(10px);
         }
 
-        #todoDescription {
+        #itemid, #itemuuid, #itemhash {
             flex: 1;
             padding: 16px 20px;
             border: 2px solid #e1e5e9;
@@ -132,7 +160,7 @@
             backdrop-filter: blur(10px);
         }
         
-        #todoInput:focus {
+        #todoInput:focus, #todoDescription:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
             transform: translateY(-2px);
@@ -149,6 +177,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+            width: 100%;
         }
         
         .add-btn:hover {
@@ -373,11 +402,23 @@
         
         <div class="input-section">
             <div class="input-container">
-                <input type="text" id="todoInput" placeholder="Add a new quest...">
-            </div>
-            <div style="margin-top: 12px;">
-                <input type="text" id="todoDescription" placeholder="Quest description">
-                <button class="add-btn" onclick="sendbackend(); addTodo()">Add Quest</button>
+                <!-- Main input fields stacked vertically -->
+                <div class="primary-inputs">
+                    <input type="text" id="todoInput" placeholder="Add a new quest...*" required>
+                    <input type="text" id="todoDescription" placeholder="Quest description*" required>
+                </div>
+                
+                <!-- Optional inputs stacked vertically -->
+                <div class="secondary-inputs">
+                    <input type="text" id="itemid" placeholder="Enter item ID">
+                    <input type="text" id="itemuuid" placeholder="Enter item UUID">
+                    <input type="text" id="itemhash" placeholder="Enter item hash">
+                </div>
+                
+                <!-- Button in its own container -->
+                <div class="button-container">
+                    <button class="add-btn" onclick="sendbackend(); addTodo()">Add Quest</button>
+                </div>
             </div>
         </div>
         
