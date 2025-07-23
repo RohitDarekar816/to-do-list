@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, redirect, render_template
+from flask_cors import CORS
 import os
 import requests
 from dotenv import load_dotenv
@@ -13,11 +14,12 @@ db = client.test
 collection = db['to_do_list']
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/submittodoitem', methods=['POST'])
 def submit_todo_item():
-    todo_item = request.form.get('todoItem')
-    todo_description = request.form.get('todoDescription')
+    todo_item = request.json.get('todoItem')
+    todo_description = request.json.get('todoDescription')
     print(f"Todo item received: {todo_item}")
     print(f"Todo description received: {todo_description}")
     
