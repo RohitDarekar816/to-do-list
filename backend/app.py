@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, redirect
+from flask import Flask, jsonify, request, redirect, render_template
 import os
 import requests
 from dotenv import load_dotenv
@@ -10,9 +10,22 @@ mongo_uri = os.getenv('MONGO_URI')
 
 client = pymongo.MongoClient(mongo_uri)
 db = client.test
-collection = db['test_collection']
+collection = db['to_do_list']
 
 app = Flask(__name__)
+
+@app.route('/') 
+def index():
+    return render_template('index.html')
+
+@app.route('/submittodoitem', methods=['POST'])
+def submit_todo_item():
+    todo_item = request.form.get('todoItem')
+    todo_description = request.form.get('todoDescription')
+    print(f"Todo item received: {todo_item}")
+    print(f"Todo description received: {todo_description}")
+    
+    return redirect('/success')
 
 @app.route('/api', methods=['GET'])
 def api():
