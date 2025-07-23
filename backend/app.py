@@ -14,10 +14,6 @@ collection = db['to_do_list']
 
 app = Flask(__name__)
 
-@app.route('/') 
-def index():
-    return render_template('index.html')
-
 @app.route('/submittodoitem', methods=['POST'])
 def submit_todo_item():
     todo_item = request.form.get('todoItem')
@@ -36,7 +32,7 @@ def submit_todo_item():
     else:
         return jsonify({"Data saved successfully!"}), 200
     
-    return redirect('/success')
+    return redirect('http://localhost:5000')
 
 @app.route('/api', methods=['GET'])
 def api():
