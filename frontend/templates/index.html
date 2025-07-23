@@ -119,6 +119,18 @@
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
         }
+
+        #todoDescription {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 16px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
         
         #todoInput:focus {
             border-color: #667eea;
@@ -362,7 +374,10 @@
         <div class="input-section">
             <div class="input-container">
                 <input type="text" id="todoInput" placeholder="Add a new quest...">
-                <button class="add-btn" onclick="sendbackend()">Add Quest</button>
+            </div>
+            <div style="margin-top: 12px;">
+                <input type="text" id="todoDescription" placeholder="Quest description">
+                <button class="add-btn" onclick="sendbackend(); addTodo()">Add Quest</button>
             </div>
         </div>
         
@@ -413,22 +428,26 @@
 
         function sendbackend() {
             const input = document.getElementById('todoInput');
+            const descriptionInput = document.getElementById('todoDescription');
+            const description = descriptionInput.value.trim();
             const text = input.value.trim();
             
-            if (text === '') return;
+            if (text === '' || description === '') {
+                alert('Please enter both a quest and a description.');
+                return;
+            }
             
             fetch('http://localhost:5001/submittodoitem', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ todoItem: text })
+                body: JSON.stringify({ todoItem: text, todoDescription: description })
             })
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
                 input.value = '';
-                addTodo(); // Add the todo to the frontend
             })
             .catch((error) => {
                 console.error('Error:', error);
