@@ -165,6 +165,17 @@
         backdrop-filter: blur(10px);
 
       }
+      #todoDescription {
+        flex: 1;
+        padding: 16px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 16px;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+      }
 
       #todoInput:focus {
         border-color: #667eea;
@@ -428,14 +439,22 @@
           <div class="input-container">
             <input
               type="text"
-              id="todoInput"
+              id="todoDescription"
               name="todoDescription"
               placeholder="Add a description..."
               style="margin-top: 12px;"
             />
           </div>
-          <button type="submit" class="add-btn" onclick="addTodo()">Add Quest</button>
+          <button type="submit" class="add-btn">Add to database</button>
+          <button class="add-btn" onclick="addTodo()">Add</button>
         </div>
+        </form>
+        <div class="todo-list" id="todoList"></div>
+            <div class="empty-state">
+                <span class="emoji">🌸</span>
+                <p>No quests yet! Add your first task above.</p>
+            </div>
+      </div>
 
       <div class="stats">
         <div class="stat-item">
@@ -454,92 +473,82 @@
     </div>
 
     <script>
-      let todos = [];
-      let todoIdCounter = 0;
-
-      function addTodo() {
-        const input = document.getElementById("todoInput");
-        const text = input.value.trim();
-
-        if (text === "") return;
-
-        const todo = {
-          id: todoIdCounter++,
-          text: text,
-          completed: false,
-        };
-
-        todos.push(todo);
-        input.value = "";
-        renderTodos();
-        updateStats();
-      }
-
-      function toggleTodo(id) {
-        todos = todos.map((todo) =>
-          todo.id === id ? { ...todo, completed: !todo.completed } : todo
-        );
-        renderTodos();
-        updateStats();
-      }
-
-      function deleteTodo(id) {
-        todos = todos.filter((todo) => todo.id !== id);
-        renderTodos();
-        updateStats();
-      }
-
-      function renderTodos() {
-        const todoList = document.getElementById("todoList");
-
-        if (todos.length === 0) {
-          todoList.innerHTML = `
+        let todos = [];
+        let todoIdCounter = 0;
+        
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            
+            if (text === '') return;
+            
+            const todo = {
+                id: todoIdCounter++,
+                text: text,
+                completed: false
+            };
+            
+            todos.push(todo);
+            input.value = '';
+            renderTodos();
+            updateStats();
+        }
+        
+        function toggleTodo(id) {
+            todos = todos.map(todo => 
+                todo.id === id ? { ...todo, completed: !todo.completed } : todo
+            );
+            renderTodos();
+            updateStats();
+        }
+        
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            renderTodos();
+            updateStats();
+        }
+        
+        function renderTodos() {
+            const todoList = document.getElementById('todoList');
+            
+            if (todos.length === 0) {
+                todoList.innerHTML = `
                     <div class="empty-state">
                         <span class="emoji">🌸</span>
                         <p>No quests yet! Add your first task above.</p>
                     </div>
                 `;
-          return;
-        }
-
-        todoList.innerHTML = todos
-          .map(
-            (todo) => `
-                <div class="todo-item ${todo.completed ? "completed" : ""}">
-                    <div class="checkbox ${
-                      todo.completed ? "checked" : ""
-                    }" onclick="toggleTodo(${todo.id})"></div>
+                return;
+            }
+            
+            todoList.innerHTML = todos.map(todo => `
+                <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                    <div class="checkbox ${todo.completed ? 'checked' : ''}" onclick="toggleTodo(${todo.id})"></div>
                     <span class="todo-text">${todo.text}</span>
-                    <button class="delete-btn" onclick="deleteTodo(${
-                      todo.id
-                    })">Delete</button>
+                    <button class="delete-btn" onclick="deleteTodo(${todo.id})">Delete</button>
                 </div>
-            `
-          )
-          .join("");
-      }
-
-      function updateStats() {
-        const total = todos.length;
-        const completed = todos.filter((todo) => todo.completed).length;
-        const remaining = total - completed;
-
-        document.getElementById("totalTasks").textContent = total;
-        document.getElementById("completedTasks").textContent = completed;
-        document.getElementById("remainingTasks").textContent = remaining;
-      }
-
-      // Allow adding todos with Enter key
-      document
-        .getElementById("todoInput")
-        .addEventListener("keypress", function (e) {
-          if (e.key === "Enter") {
-            addTodo();
-          }
+            `).join('');
+        }
+        
+        function updateStats() {
+            const total = todos.length;
+            const completed = todos.filter(todo => todo.completed).length;
+            const remaining = total - completed;
+            
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('remainingTasks').textContent = remaining;
+        }
+        
+        // Allow adding todos with Enter key
+        document.getElementById('todoInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
         });
-
-      // Initialize
-      updateStats();
+        
+        // Initialize
+        updateStats();
     </script>
   </body>
 </html>
