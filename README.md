@@ -27,8 +27,8 @@
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/todo-quest.git
-cd todo-quest
+git clone https://github.com/RohitDarekar816/to-do-list.git
+cd to-do-list
 ```
 
 2. Install Python dependencies:
@@ -108,9 +108,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📬 Contact
 
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
+Rohit Darekar - [@rohitdarekar816](mailto:rohitdarekar816@gmail.com)
 
-Project Link: [https://github.com/yourusername/todo-quest](https://github.com/yourusername/todo-quest)
+Project Link: [https://github.com/RohitDarekar816/to-do-list.git](https://github.com/RohitDarekar816/to-do-list.git)
 
 ---
-⭐️ Made with love by [Your Name] ⭐️
+⭐️ Made with love 💞 by [Rohit Darekar] ⭐️
