@@ -25,6 +25,17 @@ def submit_todo_item():
     print(f"Todo item received: {todo_item}")
     print(f"Todo description received: {todo_description}")
     
+    if todo_item or todo_description:
+        db.collection.insert_one({
+            "todo_item": todo_item,
+            "todo_description": todo_description
+        })
+    elif not todo_item or not todo_description:
+        return jsonify({"error": "Todo item and description are required"}), 400
+    
+    else:
+        return jsonify({"Data saved successfully!"}), 200
+    
     return redirect('/success')
 
 @app.route('/api', methods=['GET'])
