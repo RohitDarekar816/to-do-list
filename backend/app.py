@@ -5,6 +5,7 @@ import requests
 from dotenv import load_dotenv
 import pymongo
 import redis
+import json
 # import dnspython
 load_dotenv()
 # MongoDB connection
@@ -39,6 +40,7 @@ def redis():
     try:
         r.set('foo', 'bar')
         value = r.get('foo')
+        
         return jsonify({"message": "Redis connection successful", "value": value}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -63,6 +65,20 @@ def submit_todo_item():
         return jsonify({"Data saved successfully!"}), 200
     
     return redirect('http://localhost:5000')
+
+@app.route('/gettodoitems', methods=['GET'])
+def get_todo_items():
+    try:
+        todo_items = db.collection.find({}, {'_id': 0, 'todo_description': 1})
+        todo_items_list = list(todo_items)
+        print(f"Todo items retrieved: {todo_items_list}")
+        return jsonify({
+            "todos": todo_items_list
+        }), 200
+    except Exception as e:
+        print(f"Error retrieving todo items: {str(e)}")
+        return jsonify({"error": "Failed to retrieve todo items"}), 500
+    
 
 @app.route('/api', methods=['GET'])
 def api():
