@@ -292,6 +292,17 @@
             font-weight: bold;
         }
         
+        .todo-content {
+            flex: 1;
+            margin: 0 16px;
+        }
+
+        .todo-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
         .todo-text {
             flex: 1;
             font-size: 1rem;
@@ -409,11 +420,11 @@
                 </div>
                 
                 <!-- Optional inputs stacked vertically -->
-                <div class="secondary-inputs">
+                <!-- <div class="secondary-inputs">
                     <input type="text" id="itemid" placeholder="Enter item ID">
                     <input type="text" id="itemuuid" placeholder="Enter item UUID">
                     <input type="text" id="itemhash" placeholder="Enter item hash">
-                </div>
+                </div> -->
                 
                 <!-- Button in its own container -->
                 <div class="button-container">
@@ -446,8 +457,11 @@
     </div>
     
     <script>
+        // Get todo itmes from backend endpoint
+        // Initialize an empty array to hold todos
         let todos = [];
         let todoIdCounter = 0;
+        renderTodos();
         
         function addTodo() {
             const input = document.getElementById('todoInput');
@@ -503,32 +517,75 @@
             updateStats();
         }
         
-        function deleteTodo(id) {
+        function deleteTodo(id, todo_description) {
             todos = todos.filter(todo => todo.id !== id);
-            renderTodos();
-            updateStats();
+            fetch(`http://localhost:5001/deletetodoitem`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ todo_description: todo_description })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Delete successful:', data);
+                renderTodos();
+                updateStats();
+            })
+            .catch(error => {
+                console.error('Error deleting todo:', error);
+                alert('Failed to delete todo. Please try again.');
+            });
         }
         
         function renderTodos() {
             const todoList = document.getElementById('todoList');
             
-            if (todos.length === 0) {
+            fetch('http://localhost:5001/gettodoitems', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.todos || data.todos.length === 0) {
+                    todoList.innerHTML = `
+                        <div class="empty-state">
+                            <span class="emoji">🌸</span>
+                            <p>No quests yet! Add your first task above.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                todos = data.todos;
+                todoList.innerHTML = todos.map(todo => `
+                    <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                        <div class="checkbox ${todo.completed ? 'checked' : ''}" 
+                             onclick="toggleTodo('${todo.todo_description}')"></div>
+                        <div class="todo-content">
+                            <span class="todo-text">${todo.todo_description}</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteTodo('${todo._id}', '${todo.todo_description}')">Delete</button>
+                    </div>
+                `).join('');
+                updateStats();
+            })
+            .catch(error => {
+                console.error('Error fetching todos:', error);
                 todoList.innerHTML = `
                     <div class="empty-state">
-                        <span class="emoji">🌸</span>
-                        <p>No quests yet! Add your first task above.</p>
+                        <span class="emoji">😕</span>
+                        <p>Error loading quests. Please try again later.</p>
                     </div>
                 `;
-                return;
-            }
-            
-            todoList.innerHTML = todos.map(todo => `
-                <div class="todo-item ${todo.completed ? 'completed' : ''}">
-                    <div class="checkbox ${todo.completed ? 'checked' : ''}" onclick="toggleTodo(${todo.id})"></div>
-                    <span class="todo-text">${todo.text}</span>
-                    <button class="delete-btn" onclick="deleteTodo(${todo.id})">Delete</button>
-                </div>
-            `).join('');
+            });
         }
         
         function updateStats() {
