@@ -79,6 +79,21 @@ def get_todo_items():
         print(f"Error retrieving todo items: {str(e)}")
         return jsonify({"error": "Failed to retrieve todo items"}), 500
     
+@app.route('/deletetodoitem', methods=['DELETE'])
+def delete_todo_item():
+    todo_description = request.json.get('todo_description')
+    print(f"Todo Description to delete: {todo_description}")
+    
+    if not todo_description:
+        return jsonify({"error": "Todo Description is required"}), 400
+    
+    result = db.collection.delete_one({"todo_description": todo_description})
+    
+    if result.deleted_count == 0:
+        return jsonify({"error": "Todo Description not found"}), 404
+    
+    return jsonify({"message": "Todo Description deleted successfully"}), 200
+    
 
 @app.route('/api', methods=['GET'])
 def api():
