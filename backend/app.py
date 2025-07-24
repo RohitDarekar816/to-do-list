@@ -4,6 +4,7 @@ import os
 import requests
 from dotenv import load_dotenv
 import pymongo
+import redis
 # import dnspython
 load_dotenv()
 # MongoDB connection
@@ -15,6 +16,33 @@ collection = db['to_do_list']
 
 app = Flask(__name__)
 CORS(app)
+
+url = os.getenv('REDIS_URL')
+
+r = redis.Redis(
+    host=os.getenv('REDIS_URL', 'localhost'),
+    port=int(os.getenv('REDIS_PORT', 6379)),
+    password=os.getenv('REDIS_PASSWORD'),
+    username=os.getenv('REDIS_USERNAME'),
+    decode_responses=True,
+)
+
+success = r.set('foo', 'bar')
+result = r.get('foo')
+print(f"Redis connection successful: {success}, Result: {result}")
+
+@app.route('/redis', methods=['POST'])
+def redis():
+    if not url:
+        return jsonify({"error": "REDIS_URL not set"}), 500
+    
+    try:
+        r.set('foo', 'bar')
+        value = r.get('foo')
+        return jsonify({"message": "Redis connection successful", "value": value}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/submittodoitem', methods=['POST'])
 def submit_todo_item():
